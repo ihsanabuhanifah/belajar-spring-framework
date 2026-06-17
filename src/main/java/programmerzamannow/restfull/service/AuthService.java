@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import programmerzamannow.restfull.entity.User;
 import programmerzamannow.restfull.model.LoginUserRequest;
 import programmerzamannow.restfull.model.TokenResponse;
+import programmerzamannow.restfull.model.UserResponse;
 import programmerzamannow.restfull.repository.UserRepository;
 import programmerzamannow.restfull.security.BCrypt;
 
@@ -22,6 +23,9 @@ public class AuthService {
 
     @Autowired
     private ValidationService validationService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Transactional
     public TokenResponse login(LoginUserRequest request) {
@@ -37,8 +41,10 @@ public class AuthService {
 
             userRepository.save(user);
 
+            String token = jwtService.generateToken(user.getUsername(), user.getName());
+
             return TokenResponse.builder()
-                    .token(user.getToken())
+                    .token(token)
                     .expiredAt(user.getTokenExpireAt())
                     .build();
 
@@ -46,6 +52,13 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "username or password not found");
         }
 
+    }
+
+    @Transactional
+    public void logout(User user) {
+        user.setToken(null);
+        user.setTokenExpireAt(null);
+        userRepository.save(user);
     }
 
     private long next30Days() {
