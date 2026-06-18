@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,10 +46,11 @@ public class AuthController {
 
     @PostMapping(path = "/api/auth/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public WebResponse<TokenResponse> register(@RequestBody LoginUserRequest request) {
+    public WebResponse<TokenResponse> register(@RequestBody LoginUserRequest request,
+            @RequestHeader(name = "X-DEVICE-ID") String deviceId) {
         // Kirim data ke UserService untuk divalidasi dan disimpan ke MySQL
 
-        TokenResponse tokenResponse = userService.login(request);
+        TokenResponse tokenResponse = userService.login(request, deviceId);
 
         return WebResponse.<TokenResponse>builder().data(tokenResponse).build();
     }

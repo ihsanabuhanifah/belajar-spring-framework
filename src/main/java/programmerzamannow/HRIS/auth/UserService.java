@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import lombok.extern.slf4j.Slf4j;
 import programmerzamannow.HRIS.auth.dto.LoginUserRequest;
 import programmerzamannow.HRIS.auth.dto.RegisterUserRequest;
 import programmerzamannow.HRIS.auth.dto.TokenResponse;
@@ -18,6 +19,7 @@ import programmerzamannow.HRIS.shared.validation.ValidationService;
 import java.time.Duration;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
@@ -38,6 +40,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void register(RegisterUserRequest request) {
         // Validasi input data menggunakan service lama Ama
+        log.info("Attempting to register new user with username: '{}'", request.getUsername());
         validationService.validate(request);
 
         // Cek apakah username sudah terpakai di MySQL
@@ -53,7 +56,8 @@ public class UserService {
         user.setRole(request.getRole());
 
         // Simpan USER dan paksa MySQL untuk langsung mencatatnya di memori transaksi
-        user = userRepository.saveAndFlush(user);
+        user = userRepository.save(user);
+        log.info("User '{}' successfully registered to database", request.getUsername()); // <-- Log sukses
 
         // // 3. BUAT DAN SIMPAN EMPLOYEE
         // Employee employee = new Employee();
@@ -71,7 +75,8 @@ public class UserService {
     }
 
     @Transactional
-    public TokenResponse login(LoginUserRequest request) {
+    public TokenResponse login(LoginUserRequest request, String deviceId) {
+        log.info("User '{}' is trying to login", request.getUsername());
         // 1. Validasi input dari Postman
         validationService.validate(request);
 
@@ -94,12 +99,16 @@ public class UserService {
 
             try {
                 // Nama loker penyimpanan di Redis
-                String redisKey = "session:" + user.getUsername();
+                String redisKey = "session:" + user.getUsername() + ":" + deviceId;
 
                 // SOLUSI TERBARU: Menggunakan Duration.ofHours(1) atau Duration.ofSeconds(3600)
                 redisTemplate.opsForValue().set(redisKey, token, Duration.ofSeconds(ttlInSeconds));
 
+                log.info("Session linked and saved in Redis for user '{}' on device '{}'", user.getUsername(),
+                        deviceId);
             } catch (Exception e) {
+                log.error("Failed to save session to Redis for user '{}'. Error: {}", user.getUsername(),
+                        e.getMessage()); // <-- Log eror sistem
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                         "Redis is offline, cannot create session!");
             }
@@ -110,6 +119,7 @@ public class UserService {
                     .build();
 
         } else {
+            log.warn("Login failed: Wrong password for username '{}'", request.getUsername());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password wrong");
         }
     }

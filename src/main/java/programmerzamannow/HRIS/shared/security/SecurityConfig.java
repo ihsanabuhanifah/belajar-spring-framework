@@ -1,4 +1,4 @@
-package programmerzamannow.HRIS.shared.jwt;
+package programmerzamannow.HRIS.shared.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter)
+        public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter,
+                        RateLimitFilter rateLimitFilter)
                         throws Exception {
                 http
                                 .csrf(csrf -> csrf.disable())
@@ -32,7 +33,10 @@ public class SecurityConfig {
                                                 }))
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                // Ubah bagian penataan filter di SecurityConfig.java menjadi seperti ini:
+
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class);
 
                 return http.build();
         }
