@@ -137,4 +137,19 @@ public class ContactService {
         return new PageImpl<>(contactResponses, pageable, contacts.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public Page<ContactResponse> searchNative(User user, SearchContactRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        // Tinggal panggil satu baris query native dari repository!
+        Page<Contact> contacts = contactRepository.searchNative(
+                user.getUsername(), request.getName(), request.getEmail(), request.getPhone(), pageable);
+
+        List<ContactResponse> contactResponses = contacts.getContent().stream()
+                .map(this::tContactResponse)
+                .toList();
+
+        return new PageImpl<>(contactResponses, pageable, contacts.getTotalElements());
+    }
+
 }
