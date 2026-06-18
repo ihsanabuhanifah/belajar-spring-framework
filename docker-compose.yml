@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # 1. DATABASE UTAMA (Milik Ama)
   db:
     image: mysql:8.0
     container_name: mysql-belajar
@@ -13,6 +14,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  # 2. visualisasi MYSQL (Milik Ama)
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: phpmyadmin-belajar
@@ -25,5 +27,43 @@ services:
     ports:
       - "8080:80"
 
+  # 3. MESSAGE BROKER + UI DASBOR (Baru!)
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine # <-- Label '-management' ini yang memunculkan UI nya, Ama!
+    container_name: rabbitmq-belajar
+    restart: always
+    ports:
+      - "5672:5672"   # Port ini khusus untuk jalur bertukar pesan kode Java Spring Boot Ama
+      - "15672:15672" # Port ini khusus untuk Ama membuka halaman UI Dasbor di Browser
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # 4. MEMORY CACHE & SESSION (Baru!)
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis-belajar
+    restart: always
+    ports:
+      - "6379:6379"   # Port default Redis untuk menyimpan data RAM kilat
+    volumes:
+      - redis_data:/data
+
+  # 5. MESIN PENCARI PINTAR (Baru!)
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    container_name: elasticsearch-belajar
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false # Dimatikan dulu keamanannya agar Ama belajarnya mudah
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Kita batasi RAM-nya agar MacBook Ama tidak berat
+    ports:
+      - "9200:9200"   # Port untuk Spring Boot melakukan pencarian data text
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
 volumes:
   mysql_data:
+  rabbitmq_data: # Tempat menaruh antrean pesan agar tidak hilang saat komputer mati
+  redis_data:    # Tempat menyimpan backup data cache Redis
+  es_data:       # Tempat menyimpan indeks dokumen pencarian Elasticsearch
