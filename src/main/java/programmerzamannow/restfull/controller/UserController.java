@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,6 @@ import programmerzamannow.restfull.model.RegisterUserRequest;
 import programmerzamannow.restfull.model.UpdateUserRequest;
 import programmerzamannow.restfull.model.UserResponse;
 import programmerzamannow.restfull.model.WebResponse;
-import programmerzamannow.restfull.service.DecodeJwtService;
 import programmerzamannow.restfull.service.UserService;
 
 @RestController
@@ -48,6 +48,14 @@ public class UserController {
         UserResponse userResponse = userService.update(user, request);
         return WebResponse.<UserResponse>builder()
                 .data(userResponse)
+                .build();
+    }
+
+    @PutMapping(path = "/current", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<String> update(User user) {
+
+        return WebResponse.<String>builder()
+                .data("OK")
                 .build();
     }
 

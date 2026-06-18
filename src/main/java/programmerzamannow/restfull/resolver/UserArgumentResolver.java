@@ -39,13 +39,13 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized: Missing or Invalid Token Format");
         }
 
-        System.out.println(authorizationHeader);
         String username = decodeJwtService.getCurrentUsername();
 
-        System.out.println(username);
+        System.out.println("username" + username);
         User user = userRepository.findFirstByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token Not Found"));
 
+        System.out.println(user);
         // if (user.getTokenExpireAt() < System.currentTimeMillis()) {
         // throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token Not
         // Found");

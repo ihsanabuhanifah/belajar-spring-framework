@@ -24,4 +24,7 @@ public class ErrorController {
                 .body(WebResponse.<String>builder().errors(exception.getReason()).build());
     }
 
+
+    
+
 }
