@@ -1,5 +1,7 @@
 package programmerzamannow.mypasar.product.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import lombok.*;
 import programmerzamannow.mypasar.category.entity.Category;
@@ -24,8 +26,8 @@ public class Product {
     @Column(name = "name", length = 200, nullable = false)
     private String name;
 
-    @Column(name = "price", nullable = false)
-    private Long price;
+    @Column(name = "price", nullable = false, precision = 19, scale = 2)
+    private BigDecimal price;
 
     @Column(name = "stock", nullable = false)
     private Integer stock;
@@ -34,4 +36,10 @@ public class Product {
     @Version
     @Column(name = "version", nullable = false)
     private Long version;
+
+    @Column(name = "created_by", length = 100, nullable = false)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 100, nullable = true)
+    private String updatedBy;
 }

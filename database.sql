@@ -56,6 +56,10 @@ CREATE TABLE categories (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
+
+ALTER TABLE categories 
+ADD COLUMN created_by VARCHAR(100) NOT NULL;
+
 -- 4. TABEL PRODUK / BARANG JUALAN
 CREATE TABLE products (
     id VARCHAR(100) NOT NULL,
@@ -67,6 +71,12 @@ CREATE TABLE products (
     PRIMARY KEY (id),
     CONSTRAINT fk_categories_products FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
+
+ALTER TABLE products 
+ADD COLUMN created_by VARCHAR(100) NOT NULL;
+ALTER TABLE products 
+ADD COLUMN updated_by VARCHAR(100) NOT NULL;
+
 
 -- 5. TABEL TRANSAKSI UTAMA (ORDERS)
 CREATE TABLE orders (

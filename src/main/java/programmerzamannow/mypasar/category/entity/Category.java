@@ -25,6 +25,9 @@ public class Category {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "created_by", length = 100, nullable = false)
+    private String createdBy;
+
     @OneToMany(mappedBy = "category", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Product> products;
 }

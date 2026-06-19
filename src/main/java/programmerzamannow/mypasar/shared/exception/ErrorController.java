@@ -1,10 +1,15 @@
 package programmerzamannow.mypasar.shared.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import programmerzamannow.mypasar.shared.response.WebResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -12,6 +17,19 @@ public class ErrorController {
 
     // 1. Menangkap semua eror ResponseStatusException (seperti 401, 400, 404 yang
     // kita buat manual)
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<WebResponse<String>> constraintViolationException(ConstraintViolationException exception) {
+
+        // Mengambil pesan eror pertama yang melanggar aturan
+        String errorMessage = exception.getConstraintViolations().iterator().next().getMessage();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // 🌟 Ubah status jadi 400 Bad Request
+                .body(WebResponse.<String>builder()
+                        .errors(errorMessage) // Masukkan pesan erornya ke field 'errors'
+                        .build());
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handleResponseStatusException(ResponseStatusException exception) {
         // Catat erornya ke dalam log dengan level WARN

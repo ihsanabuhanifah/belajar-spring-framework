@@ -3,14 +3,13 @@ package programmerzamannow.mypasar.employee;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
-import programmerzamannow.mypasar.auth.UserRepository;
-import programmerzamannow.mypasar.auth.entity.User;
 import programmerzamannow.mypasar.employee.dto.CreateEmploye;
 import programmerzamannow.mypasar.employee.dto.ResponseEmployee;
 import programmerzamannow.mypasar.employee.entity.Employee;
@@ -27,13 +26,15 @@ public class EmployeeService {
     private ValidationService validationService;
 
     @Autowired
-    private UserRepository userRepository;
+    private DecodeJwtService decodeJwtService;
 
     @Autowired
-    private DecodeJwtService decodeJwtService;
+    private StringRedisTemplate redisTemplate;
 
     @Transactional
     public ResponseEmployee create(CreateEmploye request) {
+
+        String cacheKey = "cache:profile:" + decodeJwtService.getCurrentName();
 
         validationService.validate(request);
 
@@ -53,6 +54,8 @@ public class EmployeeService {
         employee.setUsername(decodeJwtService.getCurrentName());
 
         employeeRepository.save(employee);
+
+        redisTemplate.delete(cacheKey);
 
         return ResponseEmployee.builder()
                 .employeeId(employee.getId())
