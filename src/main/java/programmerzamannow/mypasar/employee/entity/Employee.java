@@ -2,7 +2,6 @@ package programmerzamannow.mypasar.employee.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import programmerzamannow.mypasar.auth.entity.User;
 
 @Getter
 @Setter
