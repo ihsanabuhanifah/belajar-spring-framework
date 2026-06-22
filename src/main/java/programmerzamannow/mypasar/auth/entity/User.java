@@ -36,6 +36,6 @@ public class User {
     // private Employee employee;
 
     // Relasi ke transaksi toko online (Orders)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Order> orders;
+    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    // private List<Order> orders;
 }

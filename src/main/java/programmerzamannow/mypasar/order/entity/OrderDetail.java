@@ -1,5 +1,7 @@
 package programmerzamannow.mypasar.order.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import lombok.*;
 import programmerzamannow.mypasar.product.entity.Product;
@@ -29,5 +31,5 @@ public class OrderDetail {
     private Integer quantity;
 
     @Column(name = "price", nullable = false)
-    private Long price; // Mengunci harga produk saat kejadian transaksi dilakukan
+    private BigDecimal price;
 }

@@ -2,8 +2,7 @@ package programmerzamannow.mypasar.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import programmerzamannow.mypasar.auth.entity.User;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -19,20 +18,19 @@ public class Order {
     @Column(name = "id", length = 100)
     private String id;
 
-    // 🔗 Menembak ke User pembeli
-    @ManyToOne
-    @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-    private User user;
+    @Column(name = "username", length = 100, nullable = false)
+    private String username;
 
     @Column(name = "order_date", nullable = false)
     private Long orderDate;
 
-    @Column(name = "total_amount", nullable = false)
-    private Long totalAmount;
+    @Column(name = "total_amount", nullable = false, precision = 19, scale = 2)
+    private BigDecimal totalAmount;
 
     @Column(name = "status", length = 50, nullable = false)
-    private String status; // PENDING, PAID, SHIPPED
+    private String status; // PENDING, PAID, CANCELLED
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    // Pembungkus relasi ke anak-anaknya tetap dipertahankan
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 }

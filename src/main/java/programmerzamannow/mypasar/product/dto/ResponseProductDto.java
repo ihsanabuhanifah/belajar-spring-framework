@@ -13,4 +13,5 @@ public class ResponseProductDto {
     private BigDecimal price;
     private Integer stock;
     private String categoryId;
+    private String categoryName;
 }
