@@ -5,11 +5,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import programmerzamannow.mypasar.order.dto.OrderRequestDto;
 import programmerzamannow.mypasar.order.dto.OrderResponseDto;
+import programmerzamannow.mypasar.order.dto.UpdateCartRequestDto;
 import programmerzamannow.mypasar.shared.jwt.DecodeJwtService;
 import programmerzamannow.mypasar.shared.response.WebResponse;
 
@@ -39,5 +42,14 @@ public class OrderController {
     public WebResponse<OrderResponseDto> get(@PathVariable(name = "orderId") String orderId) {
         OrderResponseDto response = orderService.getOrderDetail(orderId);
         return WebResponse.<OrderResponseDto>builder().data(response).build();
+    }
+
+    @PutMapping(path = "/{orderId}/cart", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderResponseDto batchUpdateQuantities(
+            @PathVariable("orderId") String orderId,
+            @RequestBody UpdateCartRequestDto request) {
+
+        String currentUsername = decodeJwtService.getCurrentName();
+        return orderService.batchUpdateCartQuantities(currentUsername, orderId, request);
     }
 }

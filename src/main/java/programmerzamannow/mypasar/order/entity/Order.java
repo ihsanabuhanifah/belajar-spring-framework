@@ -33,4 +33,7 @@ public class Order {
     // Pembungkus relasi ke anak-anaknya tetap dipertahankan
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
+
+    @Column(name = "expired_at", nullable = false)
+    private Long expiredAt;
 }

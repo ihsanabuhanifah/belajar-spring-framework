@@ -17,7 +17,10 @@ public class SecurityConfig {
 
         @Bean
         public ObjectMapper objectMapper() {
-                return new ObjectMapper();
+                ObjectMapper mapper = new ObjectMapper();
+                // Daftarkan modul bawaan agar tidak merusak Swagger dan handling Date/Time
+                mapper.findAndRegisterModules();
+                return mapper;
         }
 
         @Bean

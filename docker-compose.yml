@@ -48,6 +48,16 @@ services:
     volumes:
       - redis_data:/data
 
+  # 4b. VISUALISASI REDIS (Baru Banget Milik Ama!)
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-belajar
+    restart: always
+    ports:
+      - "5540:5540"   # Port khusus untuk Ama membuka UI Redis Insight di Browser
+    volumes:
+      - redisinsight_data:/data
+
   # 5. MESIN PENCARI PINTAR (Baru!)
   elasticsearch:
     image: elasticsearch:8.11.1
@@ -66,4 +76,5 @@ volumes:
   mysql_data:
   rabbitmq_data: # Tempat menaruh antrean pesan agar tidak hilang saat komputer mati
   redis_data:    # Tempat menyimpan backup data cache Redis
+  redisinsight_data: # Tempat menyimpan konfigurasi koneksi Redis Insight Ama
   es_data:       # Tempat menyimpan indeks dokumen pencarian Elasticsearch

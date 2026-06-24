@@ -1,0 +1,17 @@
+2026-06-23 09:55:49 [main] INFO  - Starting BelajarSpringRestfullApiApplication using Java 17.0.19 with PID 43093 (/Volumes/luvieummunafisa/java-spring/belajar-spring-restfull-api/target/classes started by ihsanabuhanifah in /Volumes/luvieummunafisa/java-spring/belajar-spring-restfull-api)
+2026-06-23 09:55:49 [main] INFO  - No active profile set, falling back to 1 default profile: "default"
+2026-06-23 09:55:55 [main] INFO  - Started BelajarSpringRestfullApiApplication in 6.554 seconds (process running for 6.767)
+2026-06-23 09:56:03 [http-nio-8081-exec-2] INFO  - Incoming request to URI: [GET] /api/v1/orders/3c24cac1-7ddf-43ef-8bb7-7e18494a1a4b
+2026-06-23 09:56:03 [http-nio-8081-exec-2] INFO  - Token in Redis: null
+2026-06-23 09:56:03 [http-nio-8081-exec-2] INFO  - Token from Header: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpaHNhbmFidWhhbmlmYWgiLCJuYW1lIjoiQURNSU4iLCJpYXQiOjE3ODIxMDkzOTQsImV4cCI6MTc4MjE5NTc5NH0.wdvNvuWCkvuP1gEq5joMpJLJAZTiMZ4Dz3q7g-duVSt2p2SrKiIT0DjQzSgn85Cp
+2026-06-23 09:56:03 [http-nio-8081-exec-2] INFO  - Username from Token: ihsanabuhanifah
+2026-06-23 09:56:03 [http-nio-8081-exec-2] INFO  - Device ID from Header: {{device_id}}
+2026-06-23 09:56:03 [http-nio-8081-exec-2] ERROR - SECURITY ALERT: Invalid token for user 'ihsanabuhanifah' from IP [0:0:0:0:0:0:0:1]
+2026-06-23 09:56:09 [http-nio-8081-exec-3] INFO  - User 'ihsanabuhanifah' is trying to login
+2026-06-23 09:56:09 [http-nio-8081-exec-3] INFO  - Session linked and saved in Redis for user 'ihsanabuhanifah' on device '{{device_id}}'
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - Incoming request to URI: [GET] /api/v1/orders/3c24cac1-7ddf-43ef-8bb7-7e18494a1a4b
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - Token in Redis: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpaHNhbmFidWhhbmlmYWgiLCJuYW1lIjoiQURNSU4iLCJpYXQiOjE3ODIxODMzNjksImV4cCI6MTc4MjI2OTc2OX0.SwK4AnAn0_wUp7sRaIze0Dm4UhAkcAYM1JjY65jttT4P-hjDIyOlj9AA494qZu2H
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - Token from Header: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpaHNhbmFidWhhbmlmYWgiLCJuYW1lIjoiQURNSU4iLCJpYXQiOjE3ODIxODMzNjksImV4cCI6MTc4MjI2OTc2OX0.SwK4AnAn0_wUp7sRaIze0Dm4UhAkcAYM1JjY65jttT4P-hjDIyOlj9AA494qZu2H
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - Username from Token: ihsanabuhanifah
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - Device ID from Header: {{device_id}}
+2026-06-23 09:56:12 [http-nio-8081-exec-4] INFO  - AUTHENTICATION VERIFIED: User 'ihsanabuhanifah' successfully accessed using matching device '{{device_id}}'

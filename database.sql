@@ -84,10 +84,14 @@ CREATE TABLE orders (
     username VARCHAR(100) NOT NULL, -- 🔗 JEMBATAN KUNCI: Menembak langsung ke tabel users
     order_date BIGINT NOT NULL,     -- Waktu checkout (Epoch Time)
     total_amount BIGINT NOT NULL,   
+    expired_at BIGINT NOT NULL,    
     status VARCHAR(50) NOT NULL,    -- 'PENDING', 'PAID', 'SHIPPED'
     PRIMARY KEY (id),
     CONSTRAINT fk_users_orders FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE orders 
+ADD COLUMN expired_at BIGINT NOT NULL;
 
 -- 6. TABEL DETAIL BELANJAAN (ORDER DETAILS)
 CREATE TABLE order_details (
