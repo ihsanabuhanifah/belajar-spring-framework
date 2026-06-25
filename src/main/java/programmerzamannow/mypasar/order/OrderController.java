@@ -52,4 +52,11 @@ public class OrderController {
         String currentUsername = decodeJwtService.getCurrentName();
         return orderService.batchUpdateCartQuantities(currentUsername, orderId, request);
     }
+
+    @PostMapping(path = "/{orderId}/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderResponseDto checkout(
+            @PathVariable("orderId") String orderId) {
+        String currentUsername = decodeJwtService.getCurrentName();
+        return orderService.checkoutOrder(currentUsername, orderId);
+    }
 }

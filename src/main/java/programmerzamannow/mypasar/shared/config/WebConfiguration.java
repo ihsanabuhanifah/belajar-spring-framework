@@ -1,4 +1,4 @@
-package programmerzamannow.mypasar;
+package programmerzamannow.mypasar.shared.config;
 // package programmerzamannow.restfull;
 
 // import java.util.List;

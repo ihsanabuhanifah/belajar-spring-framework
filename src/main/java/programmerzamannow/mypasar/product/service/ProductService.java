@@ -1,9 +1,13 @@
-package programmerzamannow.mypasar.product;
+package programmerzamannow.mypasar.product.service;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,13 +15,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import jakarta.persistence.criteria.Predicate;
-
 import programmerzamannow.mypasar.category.CategoryRespository;
 import programmerzamannow.mypasar.category.entity.Category;
+import programmerzamannow.mypasar.product.dto.CreateBulkProductDto;
 import programmerzamannow.mypasar.product.dto.CreateProductDto;
 import programmerzamannow.mypasar.product.dto.ResponseProductDto;
 import programmerzamannow.mypasar.product.dto.SearchProductRequestDto;
 import programmerzamannow.mypasar.product.entity.Product;
+import programmerzamannow.mypasar.product.repository.ProductRepository;
+import programmerzamannow.mypasar.shared.config.RabbitMqConfig;
 import programmerzamannow.mypasar.shared.jwt.DecodeJwtService;
 import programmerzamannow.mypasar.shared.validation.ValidationService;
 
@@ -40,6 +46,9 @@ public class ProductService {
 
         @Autowired
         private DecodeJwtService decodeJwtService;
+
+        @Autowired
+        private RabbitTemplate rabbitTemplate;
 
         @Transactional
         public ResponseProductDto createProduct(CreateProductDto request) {
@@ -126,4 +135,49 @@ public class ProductService {
                                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                                 .build());
         }
+
+        @Transactional
+        public List<ResponseProductDto> createProductBulk(CreateBulkProductDto request) {
+                validationService.validate(request);
+                List<Product> productsToSave = new ArrayList<>();
+                String currentUsername = decodeJwtService.getCurrentName();
+
+                for (CreateProductDto dto : request.getProducts()) {
+                        Category category = categoryRepository.findById(dto.getCategoryId())
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Category not found"));
+                        Product product = Product.builder()
+                                        .id(UUID.randomUUID().toString())
+                                        .name(dto.getName())
+                                        .price(dto.getPrice())
+                                        .stock(dto.getStock())
+                                        .createdBy(currentUsername)
+                                        .category(category)
+                                        .build();
+                        productsToSave.add(product);
+                }
+                productRepository.saveAll(productsToSave);
+                List<ResponseProductDto> responses = new ArrayList<>();
+                for (Product product : productsToSave) {
+                        responses.add(ResponseProductDto.builder()
+                                        .id(product.getId())
+                                        .name(product.getName())
+                                        .price(product.getPrice())
+                                        .stock(product.getStock())
+                                        .categoryId(product.getCategory().getId())
+                                        .categoryName(product.getCategory().getName())
+                                        .build());
+                }
+
+                // 2. KIRIM KE RABBITMQ SETELAH COMMIT MYSQL SUKSES
+                // 2. KIRIM KE RABBITMQ SETELAH COMMIT MYSQL SUKSES (Versi Lambda yang ringkas)
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                                rabbitTemplate.convertAndSend(RabbitMqConfig.PRODUCT_SYNC_QUEUE, responses);
+                        }
+                });
+                return responses;
+        }
+
 }

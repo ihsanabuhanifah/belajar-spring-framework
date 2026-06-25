@@ -27,54 +27,67 @@ services:
     ports:
       - "8080:80"
 
-  # 3. MESSAGE BROKER + UI DASBOR (Baru!)
+  # 3. MESSAGE BROKER + UI DASBOR
   rabbitmq:
-    image: rabbitmq:3.11-management-alpine # <-- Label '-management' ini yang memunculkan UI nya, Ama!
+    image: rabbitmq:3.11-management-alpine
     container_name: rabbitmq-belajar
     restart: always
     ports:
-      - "5672:5672"   # Port ini khusus untuk jalur bertukar pesan kode Java Spring Boot Ama
-      - "15672:15672" # Port ini khusus untuk Ama membuka halaman UI Dasbor di Browser
+      - "5672:5672"   # Jalur kode Java Spring Boot Ama
+      - "15672:15672" # UI Dasbor di Browser
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  # 4. MEMORY CACHE & SESSION (Baru!)
+  # 4. MEMORY CACHE & SESSION
   redis:
     image: redis:7.0-alpine
     container_name: redis-belajar
     restart: always
     ports:
-      - "6379:6379"   # Port default Redis untuk menyimpan data RAM kilat
+      - "6379:6379"   
     volumes:
       - redis_data:/data
 
-  # 4b. VISUALISASI REDIS (Baru Banget Milik Ama!)
+  # 4b. VISUALISASI REDIS
   redis-insight:
     image: redis/redisinsight:latest
     container_name: redisinsight-belajar
     restart: always
     ports:
-      - "5540:5540"   # Port khusus untuk Ama membuka UI Redis Insight di Browser
+      - "5540:5540"   
     volumes:
       - redisinsight_data:/data
 
-  # 5. MESIN PENCARI PINTAR (Baru!)
+  # 5. MESIN PENCARI PINTAR (Di-downgrade ke 8.15.2 agar RINGAN & COCOK dengan Spring Boot 4.x)
   elasticsearch:
-    image: elasticsearch:8.11.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
     container_name: elasticsearch-belajar
     restart: always
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false # Dimatikan dulu keamanannya agar Ama belajarnya mudah
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Kita batasi RAM-nya agar MacBook Ama tidak berat
+      - xpack.security.enabled=false # Dimatikan agar tidak pusing token/password saat belajar
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Alokasi RAM dikunci aman di 512MB
     ports:
-      - "9200:9200"   # Port untuk Spring Boot melakukan pencarian data text
+      - "9200:9200"   
     volumes:
       - es_data:/usr/share/elasticsearch/data
 
+  # 5b. VISUALISASI ELASTICSEARCH (Versinya wajib DISAMAKAN dengan Elasticsearch)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.2
+    container_name: kibana-belajar
+    restart: always
+    environment:
+      # Perbaikan: Diarahkan ke nama container yang benar 'elasticsearch-belajar'
+      - ELASTICSEARCH_HOSTS=http://elasticsearch-belajar:9200 
+    ports:
+      - "5601:5601"   
+    depends_on:
+      - elasticsearch
+
 volumes:
   mysql_data:
-  rabbitmq_data: # Tempat menaruh antrean pesan agar tidak hilang saat komputer mati
-  redis_data:    # Tempat menyimpan backup data cache Redis
-  redisinsight_data: # Tempat menyimpan konfigurasi koneksi Redis Insight Ama
-  es_data:       # Tempat menyimpan indeks dokumen pencarian Elasticsearch
+  rabbitmq_data: 
+  redis_data:    
+  redisinsight_data: 
+  es_data:
