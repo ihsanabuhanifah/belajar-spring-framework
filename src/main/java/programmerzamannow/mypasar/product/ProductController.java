@@ -65,6 +65,37 @@ public class ProductController {
                                 .build();
         }
 
+        @GetMapping(value = "list-mysql", produces = MediaType.APPLICATION_JSON_VALUE)
+        public WebResponse<List<ResponseProductDto>> listMySQL(
+                        @RequestParam(name = "name", required = false) String name,
+                        @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+                        @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
+                        @RequestParam(name = "categoryId", required = false) String categoryId,
+
+                        @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                        @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+                SearchProductRequestDto request = SearchProductRequestDto.builder()
+                                .name(name)
+                                .minPrice(minPrice)
+                                .maxPrice(maxPrice)
+                                .categoryId(categoryId)
+                                .page(page)
+                                .size(size)
+                                .build();
+
+                Page<ResponseProductDto> productPage = productService.getAllProductsPagedAndSearched(request);
+
+                return WebResponse.<List<ResponseProductDto>>builder()
+                                .data(productPage.getContent())
+                                .paging(PagingResponse.builder()
+                                                .currentPage(productPage.getNumber())
+                                                .totalPages(productPage.getTotalPages())
+                                                .totalElements(productPage.getTotalElements())
+                                                .size(productPage.getSize())
+                                                .build())
+                                .build();
+        }
+
         @PostMapping(value = "createBulk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         public WebResponse<List<ResponseProductDto>> createBulk(@RequestBody CreateBulkProductDto request) {
                 List<ResponseProductDto> responses = productService.createProductBulk(request);

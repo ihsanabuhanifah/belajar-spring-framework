@@ -2,12 +2,9 @@ package programmerzamannow.mypasar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchClientAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = {
-		ElasticsearchClientAutoConfiguration.class
-})
+@SpringBootApplication()
 @EnableScheduling
 public class BelajarSpringRestfullApiApplication {
 

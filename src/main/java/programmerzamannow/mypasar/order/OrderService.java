@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
 import programmerzamannow.mypasar.audit.AuditLogRepository;
-import programmerzamannow.mypasar.audit.entity.AuditLog;
 import programmerzamannow.mypasar.order.dto.*;
 import programmerzamannow.mypasar.order.entity.Order;
 import programmerzamannow.mypasar.order.entity.OrderDetail;

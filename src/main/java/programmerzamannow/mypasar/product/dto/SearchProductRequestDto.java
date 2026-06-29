@@ -16,6 +16,8 @@ public class SearchProductRequestDto {
     private BigDecimal minPrice; // 🌟 BARU: Filter harga minimal (Optional)
     private BigDecimal maxPrice; // 🌟 BARU: Filter harga maksimal (Optional)
     private String categoryId;
+    private String keyword; // 🌟 BARU: Untuk menampung kata kunci pencarian (Optional) maka mencari dari
+                            // semua field
 
     @NotNull(message = "Page number is required")
     @Min(value = 0, message = "Page page must be at least 0")

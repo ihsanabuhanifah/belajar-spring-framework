@@ -8,14 +8,11 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import lombok.*;
 
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(indexName = "idx_products")
 public class ProductDocument {
-
     @Id
     private String id;
 
